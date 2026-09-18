@@ -8,6 +8,8 @@ WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, 
 
 Code: [`apps/wifi_logger`](apps/wifi_logger)
 
+![On-device screen showing RSSI in dBm and battery percentage](docs/device.jpg)
+
 ![Web dashboard showing RSSI chart, battery, and Forget WiFi button](docs/dashboard.png)
 
 ## Flashing a precompiled release
