@@ -40,7 +40,6 @@ unsigned long lastLogMs = 0;
 int lastRssi = 0;
 int lastBatteryPct = -1;
 char lastTimestamp[32] = "-";
-String deviceIP = "-";
 
 // Saved WiFi credentials live in NVS flash (namespace "wifi"), not in code.
 bool loadWifiCreds(String &ssid, String &pass) {
@@ -67,8 +66,10 @@ void clearWifiCreds() {
 // Prompts for one line of text on-device, using the physical keyboard.
 // Enter confirms (only once the line has content, unless allowEmpty),
 // backspace edits. When mask is true (password entry) typed characters
-// are echoed as '*' so nothing legible shows on screen.
-String promptKeyboardInput(const char* label, bool mask, bool allowEmpty) {
+// are echoed as '*' so nothing legible shows on screen. maxLen caps input
+// length (0 = unlimited) so it can't exceed what WiFi.begin() accepts
+// (32 bytes for an SSID, 63 for a WPA passphrase).
+String promptKeyboardInput(const char* label, bool mask, bool allowEmpty, size_t maxLen = 0) {
   String value = "";
 
   auto redraw = [&]() {
@@ -91,6 +92,7 @@ String promptKeyboardInput(const char* label, bool mask, bool allowEmpty) {
       bool changed = false;
 
       for (char c : status.word) {
+        if (maxLen > 0 && value.length() >= maxLen) continue;
         value += c;
         changed = true;
       }
@@ -182,7 +184,7 @@ String selectSSIDFromScan() {
       auto status = M5Cardputer.Keyboard.keysState();
       for (char c : status.word) {
         if (c == '0') {
-          return promptKeyboardInput("WiFi SSID:", false, false);
+          return promptKeyboardInput("WiFi SSID:", false, false, 32);
         }
         if (c >= '1' && c <= '9') {
           int idx = c - '1';
@@ -199,7 +201,7 @@ String selectSSIDFromScan() {
 // Runs the on-device SSID/password entry screens and saves the result.
 void promptAndSaveWifiCreds(String &ssid, String &pass) {
   ssid = selectSSIDFromScan();
-  pass = promptKeyboardInput("WiFi password:", true, true);
+  pass = promptKeyboardInput("WiFi password:", true, true, 63);
   saveWifiCreds(ssid, pass);
 }
 
@@ -250,11 +252,37 @@ void handleIcon() {
   server.send_P(200, "image/png", (const char*)ICON_PNG, ICON_PNG_LEN);
 }
 
+// Escapes a string for safe embedding inside a JSON string literal.
+// Only SSID needs this (timestamps/IPs are generated in known-safe formats),
+// but it's applied generically since it's cheap and SSIDs are free-form
+// user/router-chosen text that may contain quotes or backslashes.
+void appendJsonEscaped(String &out, const String &in) {
+  for (size_t i = 0; i < in.length(); i++) {
+    char c = in[i];
+    if (c == '"' || c == '\\') out += '\\';
+    if ((uint8_t)c < 0x20) continue; // drop control chars rather than escape
+    out += c;
+  }
+}
+
 void handleData() {
   lastBatteryPct = M5.Power.getBatteryLevel();
-  char json[220];
-  snprintf(json, sizeof(json), "{\"rssi\":%d,\"batt\":%d,\"ts\":\"%s\",\"ip\":\"%s\",\"ssid\":\"%s\"}",
-    lastRssi, lastBatteryPct, lastTimestamp, deviceIP.c_str(), WiFi.SSID().c_str());
+
+  String ssidEscaped;
+  appendJsonEscaped(ssidEscaped, WiFi.SSID());
+
+  String json = "{\"rssi\":";
+  json += lastRssi;
+  json += ",\"batt\":";
+  json += lastBatteryPct;
+  json += ",\"ts\":\"";
+  json += lastTimestamp;
+  json += "\",\"ip\":\"";
+  json += WiFi.localIP().toString();
+  json += "\",\"ssid\":\"";
+  json += ssidEscaped;
+  json += "\"}";
+
   server.send(200, "application/json", json);
 }
 
@@ -320,17 +348,20 @@ void setup() {
     }
 
     if (WiFi.status() == WL_CONNECTED) {
-      deviceIP = WiFi.localIP().toString();
       break;
     }
 
-    // Wrong password, WiFi out of range, etc. - let the user retype instead
-    // of getting stuck forever.
-    clearWifiCreds();
-    promptKeyboardInput(
-      "Connect failed.\nCheck pass/signal.\n\nENTER to retry.",
+    // Could be a wrong password, or just the router being briefly down/out
+    // of range during boot - don't wipe otherwise-good saved credentials
+    // for a transient failure. ENTER retries the same credentials; typing
+    // R first re-enters them (e.g. after an actual password change).
+    String choice = promptKeyboardInput(
+      "Connect failed.\nCheck pass/signal.\n\nENTER: retry\nR+ENTER: re-enter WiFi",
       false, true);
-    haveCreds = false;
+    if (choice.length() > 0 && (choice[0] == 'r' || choice[0] == 'R')) {
+      clearWifiCreds();
+      haveCreds = false;
+    }
   }
 
   configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov");
@@ -416,7 +447,11 @@ void drawStatus() {
   drawValue(cx, cy1, rssiBuf, "dBm", colorForRssi(lastRssi));
 
   char battBuf[24];
-  snprintf(battBuf, sizeof(battBuf), "BAT %d %%", lastBatteryPct);
+  if (lastBatteryPct < 0) {
+    snprintf(battBuf, sizeof(battBuf), "BAT --%%");
+  } else {
+    snprintf(battBuf, sizeof(battBuf), "BAT %d %%", lastBatteryPct);
+  }
   M5.Display.setTextDatum(middle_center);
   M5.Display.setFont(FONT);
   M5.Display.setTextSize(BATT_SCALE);

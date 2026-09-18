@@ -4,7 +4,7 @@ An Arduino (C++) sketch for the [M5Stack Cardputer Adv](https://docs.m5stack.com
 
 Joins your home WiFi, logs signal strength (RSSI) to the SD card every minute with a real timestamp (NTP), and serves a live + historical chart over the network.
 
-WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, or type one manually) and stored in flash — never hardcoded. A "Forget WiFi" option in the web dashboard's settings panel wipes them so you can re-enter new ones.
+WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, or type one manually) and stored in flash — never hardcoded. The web dashboard's settings panel shows the device's current IP address and has a "Forget WiFi" option that wipes the saved credentials so you can re-enter new ones.
 
 The dashboard shows the connected SSID, RSSI and battery with Good/Fair/Poor status pills, and a signal history chart with a 1H/3H/6H/12H/24H/All range picker.
 

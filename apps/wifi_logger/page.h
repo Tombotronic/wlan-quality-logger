@@ -18,7 +18,7 @@ const char* INDEX_HTML = R"HTML(
   <link rel="icon" href="/icon.png">
   <link rel="apple-touch-icon" href="/icon.png">
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1"></script>
   <style>
     :root {
       --bg: #f2f2f6;
@@ -103,6 +103,17 @@ const char* INDEX_HTML = R"HTML(
     }
     .settings-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .settings-head h3 { margin: 0; font-size: 1.1em; font-weight: 800; }
+    .settings-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 2px;
+      font-size: 0.9em;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .settings-info-label { color: var(--muted); }
+    .settings-info-value { font-weight: 700; }
     .close-btn {
       background: none;
       border: none;
@@ -261,6 +272,10 @@ const char* INDEX_HTML = R"HTML(
         <h3>Settings</h3>
         <button class="close-btn" id="closeSettings" aria-label="Close">&times;</button>
       </div>
+      <div class="settings-info">
+        <span class="settings-info-label">IP address</span>
+        <span class="settings-info-value" id="ipAddr">-</span>
+      </div>
       <button id="forgetBtn">Forget Wi-Fi</button>
     </div>
   </div>
@@ -345,8 +360,8 @@ const char* INDEX_HTML = R"HTML(
         const d = await r.json();
         document.getElementById('rssi').textContent = d.rssi;
         document.getElementById('ts').textContent = formatTs(d.ts);
-        document.getElementById('batt').textContent = d.batt;
         document.getElementById('ssid').textContent = d.ssid;
+        document.getElementById('ipAddr').textContent = d.ip;
 
         const rssiPct = Math.max(0, Math.min(100, (d.rssi + 100) / 80 * 100));
         const rssiBar = document.getElementById('rssiBar');
@@ -358,9 +373,12 @@ const char* INDEX_HTML = R"HTML(
         pill.textContent = status.label;
         pill.className = 'status-pill ' + status.cls;
 
+        // -1 = battery level unavailable (M5.Power.getBatteryLevel() sentinel)
+        const battUnknown = d.batt < 0;
+        document.getElementById('batt').textContent = battUnknown ? '--' : d.batt;
         const battBar = document.getElementById('battBar');
-        battBar.style.width = Math.max(0, Math.min(100, d.batt)) + '%';
-        battBar.style.background = colorForBattery(d.batt);
+        battBar.style.width = (battUnknown ? 0 : Math.max(0, Math.min(100, d.batt))) + '%';
+        battBar.style.background = battUnknown ? '#8a8a8e' : colorForBattery(d.batt);
       } catch (e) {}
       setTimeout(pollNow, 2000);
     }
@@ -398,6 +416,10 @@ const char* INDEX_HTML = R"HTML(
           const parts = l.split(',');
           return { t: new Date(parts[0].replace(' ', 'T')), v: parseInt(parts[1]) };
         }).filter(p => !isNaN(p.t.getTime()) && !isNaN(p.v));
+        // Local timestamps repeat an hour at the CEST->CET DST fold-back,
+        // so raw log order isn't guaranteed strictly increasing - sort so
+        // the chart never draws a line running backwards.
+        historyRaw.sort((a, b) => a.t - b.t);
         applyRange();
       } catch (e) {}
       setTimeout(loadHistory, 30000);
