@@ -35,6 +35,7 @@ const unsigned long LOG_INTERVAL_MS = 60UL * 1000UL; // 1 minute
 
 WebServer server(80);
 Preferences wifiPrefs;
+bool sdAvailable = false;
 unsigned long lastLogMs = 0;
 int lastRssi = 0;
 int lastBatteryPct = -1;
@@ -210,7 +211,7 @@ bool getTimestamp(char* buf, size_t len) {
 }
 
 void logReading() {
-  if (WiFi.status() != WL_CONNECTED) return;
+  if (!sdAvailable || WiFi.status() != WL_CONNECTED) return;
 
   char ts[32];
   if (!getTimestamp(ts, sizeof(ts))) return;
@@ -254,6 +255,10 @@ void handleData() {
 }
 
 void handleHistory() {
+  if (!sdAvailable) {
+    server.send(200, "text/csv", "");
+    return;
+  }
   File f = SD.open(LOG_PATH, FILE_READ);
   if (!f) {
     server.send(200, "text/csv", "");
@@ -274,11 +279,12 @@ void setup() {
   M5.Display.println("Mounting SD...");
 
   SPI.begin(SD_CLK, SD_MISO, SD_MOSI, SD_CS);
-  if (!SD.begin(SD_CS, SPI)) {
+  sdAvailable = SD.begin(SD_CS, SPI);
+  if (!sdAvailable) {
     M5.Display.println("SD mount FAILED");
-    while (true) { delay(1000); }
-  }
-  if (!SD.exists(LOG_PATH)) {
+    M5.Display.println("Continuing without logging.");
+    delay(2000);
+  } else if (!SD.exists(LOG_PATH)) {
     File f = SD.open(LOG_PATH, FILE_WRITE);
     if (f) {
       f.println("timestamp,rssi");
