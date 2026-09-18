@@ -8,6 +8,8 @@ WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, 
 
 Code: [`apps/wifi_logger`](apps/wifi_logger)
 
+![Web dashboard showing RSSI chart, battery, and Forget WiFi button](docs/dashboard.png)
+
 ## Flashing a precompiled release
 
 No Arduino IDE needed. Grab the latest `.bin` from [Releases](../../releases), then:
