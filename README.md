@@ -4,7 +4,9 @@ An Arduino (C++) sketch for the [M5Stack Cardputer Adv](https://docs.m5stack.com
 
 Joins your home WiFi, logs signal strength (RSSI) to the SD card every minute with a real timestamp (NTP), and serves a live + historical chart over the network.
 
-WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, or type one manually) and stored in flash — never hardcoded. A "Forget WiFi" button on the web dashboard wipes them so you can re-enter new ones.
+WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, or type one manually) and stored in flash — never hardcoded. A "Forget WiFi" option in the web dashboard's settings panel wipes them so you can re-enter new ones.
+
+The dashboard shows the connected SSID, RSSI and battery with Good/Fair/Poor status pills, and a signal history chart with a 1H/3H/6H/12H/24H/All range picker.
 
 The web dashboard can be added to your phone's home screen (iOS "Add to Home Screen") for a fullscreen, no-browser-chrome app-like view with its own icon and title.
 
@@ -13,9 +15,9 @@ The web dashboard can be added to your phone's home screen (iOS "Add to Home Scr
 
 Code: [`apps/wifi_logger`](apps/wifi_logger)
 
-![On-device screen showing RSSI in dBm and battery percentage](docs/device.jpg)
+![On-device screen showing RSSI in dBm and battery percentage](docs/device.png)
 
-![Web dashboard showing RSSI chart, battery, and Forget WiFi button](docs/dashboard.png)
+![Web dashboard showing RSSI chart and battery](docs/dashboard.png)
 
 ## Flashing a precompiled release
 
