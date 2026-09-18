@@ -5,3 +5,4 @@ wifi_log.csv
 backups/
 CLAUDE.md
 *.bin
+.claude/settings.local.json
