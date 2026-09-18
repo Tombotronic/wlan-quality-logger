@@ -23,6 +23,13 @@ esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wlan-quali
 
 (On Windows/Linux the port looks like `COM3` or `/dev/ttyACM0`.) Insert a FAT32-formatted microSD card before powering on for RSSI logging + history; without one, the device shows a warning and continues on to WiFi setup and the live dashboard, just without logging or history. First boot walks you through WiFi setup on the device's own keyboard.
 
+### Typing on the device's keyboard
+
+- **Letters/digits** type normally, lowercase by default.
+- **Aa** (the blue key, bottom-left area) is Shift — hold it while pressing a letter or symbol key for the uppercase/shifted character (e.g. `1` → `!`). There's no caps-lock toggle; it's held-per-keystroke only.
+- **del** (top-right key) is Backspace.
+- **ok** (the enter key, right side of the third row) confirms the SSID or password field.
+
 ## Hardware
 
 - **SoC:** ESP32-S3FN8, Xtensa LX7 dual-core @ 240MHz, 8MB flash, WiFi/BLE
