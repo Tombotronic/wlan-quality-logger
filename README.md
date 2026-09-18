@@ -8,6 +8,17 @@ WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, 
 
 Code: [`apps/wifi_logger`](apps/wifi_logger)
 
+## Flashing a precompiled release
+
+No Arduino IDE needed. Grab the latest `.bin` from [Releases](../../releases), then:
+
+```
+pip install esptool   # if you don't already have it
+esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wlan-quality-logger-vX.Y.Z.bin
+```
+
+(On Windows/Linux the port looks like `COM3` or `/dev/ttyACM0`.) Insert a FAT32-formatted microSD card before powering on — the sketch halts if it can't mount one. First boot walks you through WiFi setup on the device's own keyboard.
+
 ## Hardware
 
 - **SoC:** ESP32-S3FN8, Xtensa LX7 dual-core @ 240MHz, 8MB flash, WiFi/BLE
