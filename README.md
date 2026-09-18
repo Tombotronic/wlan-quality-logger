@@ -8,6 +8,9 @@ WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, 
 
 The web dashboard can be added to your phone's home screen (iOS "Add to Home Screen") for a fullscreen, no-browser-chrome app-like view with its own icon and title.
 
+> [!NOTE]
+> The on-device RSSI readout intentionally shifts position slightly between updates — that's screen burn-in protection, not a glitch.
+
 Code: [`apps/wifi_logger`](apps/wifi_logger)
 
 ![On-device screen showing RSSI in dBm and battery percentage](docs/device.jpg)
@@ -31,8 +34,6 @@ esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wlan-quali
 - **Aa** (the blue key, bottom-left area) is Shift — hold it while pressing a letter or symbol key for the uppercase/shifted character (e.g. `1` → `!`). There's no caps-lock toggle; it's held-per-keystroke only.
 - **del** (top-right key) is Backspace.
 - **ok** (the enter key, right side of the third row) confirms the SSID or password field.
-
-The on-device RSSI readout intentionally shifts position slightly between updates — that's screen burn-in protection, not a glitch.
 
 ## Hardware
 
