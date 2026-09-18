@@ -6,6 +6,8 @@ Joins your home WiFi, logs signal strength (RSSI) to the SD card every minute wi
 
 WiFi credentials are entered on-device via the keyboard (scan and pick an SSID, or type one manually) and stored in flash — never hardcoded. A "Forget WiFi" button on the web dashboard wipes them so you can re-enter new ones.
 
+The web dashboard can be added to your phone's home screen (iOS "Add to Home Screen") for a fullscreen, no-browser-chrome app-like view with its own icon and title.
+
 Code: [`apps/wifi_logger`](apps/wifi_logger)
 
 ![On-device screen showing RSSI in dBm and battery percentage](docs/device.jpg)
