@@ -22,8 +22,6 @@ Arduino (C++) sketches for the [M5Stack Cardputer Adv](https://docs.m5stack.com/
 - **IR:** IR emitter (G44)
 - **Battery:** 1750mAh Li-ion, ADC on G10
 
-See [`CLAUDE.md`](CLAUDE.md) for the full pinout, factory-reset instructions, and SD card setup notes.
-
 ## Dev platform
 
 Arduino IDE (or `arduino-cli`) with the [M5Cardputer library](https://github.com/m5stack/M5Cardputer), which pulls in M5Unified/M5GFX. Board: `esp32:esp32:esp32s3`.
