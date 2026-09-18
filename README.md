@@ -30,6 +30,8 @@ esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wlan-quali
 - **del** (top-right key) is Backspace.
 - **ok** (the enter key, right side of the third row) confirms the SSID or password field.
 
+The on-device RSSI readout intentionally shifts position slightly between updates — that's screen burn-in protection, not a glitch.
+
 ## Hardware
 
 - **SoC:** ESP32-S3FN8, Xtensa LX7 dual-core @ 240MHz, 8MB flash, WiFi/BLE
