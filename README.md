@@ -21,14 +21,6 @@ esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wlan-quali
 
 (On Windows/Linux the port looks like `COM3` or `/dev/ttyACM0`.) Insert a FAT32-formatted microSD card before powering on — the sketch halts if it can't mount one. First boot walks you through WiFi setup on the device's own keyboard.
 
-### Restoring factory stock firmware
-
-Each release also includes a full flash dump of the stock M5Stack firmware (launcher + demo apps), taken before this project's code was ever installed on the device. Flash it the same way to undo everything and get back to as-shipped condition:
-
-```
-esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 cardputer-adv-factory-stock-vX.Y-zzzzzzz.bin
-```
-
 ## Hardware
 
 - **SoC:** ESP32-S3FN8, Xtensa LX7 dual-core @ 240MHz, 8MB flash, WiFi/BLE
