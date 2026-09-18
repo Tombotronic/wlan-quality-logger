@@ -206,6 +206,10 @@ void promptAndSaveWifiCreds(String &ssid, String &pass) {
 bool getTimestamp(char* buf, size_t len) {
   struct tm t;
   if (!getLocalTime(&t, 100)) return false;
+  // Before NTP actually syncs, the ESP32 (no battery-backed RTC) can report
+  // a clock stuck around the Unix epoch instead of failing outright; skip
+  // logging rather than write an obviously-bogus timestamp.
+  if (t.tm_year + 1900 < 2020) return false;
   strftime(buf, len, "%Y-%m-%d %H:%M:%S", &t);
   return true;
 }
@@ -236,7 +240,7 @@ void handleRoot() {
 void handleForget() {
   clearWifiCreds();
   server.send(200, "text/html",
-    "<html><body style='font-family:monospace;background:#111;color:#eee;padding:40px'>"
+    "<html><body style='font-family:-apple-system,sans-serif;background:#f2f2f6;color:#1c1c1e;padding:40px'>"
     "<h2>WiFi credentials cleared.</h2><p>Restarting into setup mode...</p></body></html>");
   delay(1500);
   ESP.restart();
@@ -248,9 +252,9 @@ void handleIcon() {
 
 void handleData() {
   lastBatteryPct = M5.Power.getBatteryLevel();
-  char json[160];
-  snprintf(json, sizeof(json), "{\"rssi\":%d,\"batt\":%d,\"ts\":\"%s\",\"ip\":\"%s\"}",
-    lastRssi, lastBatteryPct, lastTimestamp, deviceIP.c_str());
+  char json[220];
+  snprintf(json, sizeof(json), "{\"rssi\":%d,\"batt\":%d,\"ts\":\"%s\",\"ip\":\"%s\",\"ssid\":\"%s\"}",
+    lastRssi, lastBatteryPct, lastTimestamp, deviceIP.c_str(), WiFi.SSID().c_str());
   server.send(200, "application/json", json);
 }
 
