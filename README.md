@@ -41,3 +41,7 @@ esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wlan-quali
 ## Dev platform
 
 Arduino IDE (or `arduino-cli`) with the [M5Cardputer library](https://github.com/m5stack/M5Cardputer), which pulls in M5Unified/M5GFX. Board: `esp32:esp32:esp32s3`.
+
+## Roadmap
+
+1. Make the web dashboard more modern and nicer looking ([#1](../../issues/1))
