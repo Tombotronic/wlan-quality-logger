@@ -1,4 +1,4 @@
-// HTML/JS for the WLAN logger web UI.
+// HTML/JS for the WiFi logger web UI.
 // Kept in a separate header because Arduino's .ino prototype-generator
 // chokes on the word "function" inside the raw string literal.
 
@@ -7,13 +7,13 @@ const char* INDEX_HTML = R"HTML(
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-  <title>Cardputer Adv - WLAN Quality</title>
+  <title>Cardputer Adv - WiFi Quality</title>
 
   <!-- iOS "Add to Home Screen" app behavior (fullscreen, no Safari chrome) -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="WLAN Quality">
+  <meta name="apple-mobile-web-app-title" content="WiFi Quality">
   <meta name="theme-color" content="#f2f2f6">
   <link rel="icon" href="/icon.png">
   <link rel="apple-touch-icon" href="/icon.png">

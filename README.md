@@ -1,4 +1,4 @@
-# WLAN Quality Logger
+# WiFi Quality Logger
 
 An Arduino (C++) sketch for the [M5Stack Cardputer Adv](https://docs.m5stack.com/en/core/Cardputer-Adv) — a pocket ESP32-S3 dev board with keyboard, screen, mic/speaker, and IMU.
 
@@ -25,7 +25,7 @@ No Arduino IDE needed. Grab the latest `.bin` from [Releases](../../releases), t
 
 ```
 pip install esptool   # if you don't already have it
-esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wlan-quality-logger-vX.Y.Z.bin
+esptool.py --chip esp32s3 --port /dev/cu.usbmodemXXXX write_flash 0x0 wifi-quality-logger-vX.Y.Z.bin
 ```
 
 (On Windows/Linux the port looks like `COM3` or `/dev/ttyACM0`.) Insert a FAT32-formatted microSD card before powering on for RSSI logging + history; without one, the device shows a warning and continues on to WiFi setup and the live dashboard, just without logging or history. First boot walks you through WiFi setup on the device's own keyboard.

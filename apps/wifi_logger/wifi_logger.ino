@@ -1,4 +1,4 @@
-// WLAN quality logger for M5Stack Cardputer Adv
+// WiFi quality logger for M5Stack Cardputer Adv
 // Joins your home WiFi (station mode), logs signal strength (RSSI) to the
 // SD card once a minute with a real timestamp (via NTP), and serves a
 // live + historical chart over the same network.
